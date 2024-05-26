@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Panel</title>
+
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom, rgba(0, 0, 50, 0.8), rgba(0, 0, 150, 0.8)), url('bg.jpeg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .navbar {
+            background-color: #0056b3;
+            color: #fff;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 200px; /* Navbar genişliği */
+            height: 100vh; /* Sayfa yüksekliği kadar */
+            flex-direction: column; /* Linklerin alt alta gelmesi için */
+        }
+
+        .navbar div {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-top: 20px;
+        }
+
+        .navbar a {
+            color: #fff;
+            font-size: 20px;
+            text-decoration: none;
+            margin: 5px 0; /* Yukarı ve aşağı boşlukları ayarlar */
+            padding: 5px; /* Sol ve sağ boşlukları ayarlar */
+        }
+        .navbar h3 {
+            color: #fff;
+            font-size: 20px;
+            text-decoration: none;
+            margin: 5px 0; /* Yukarı ve aşağı boşlukları ayarlar */
+            padding: 5px; /* Sol ve sağ boşlukları ayarlar */
+        }
+        .navbar span{
+            color: #fff;
+            font-size: 20px;
+            text-decoration: none;
+            margin: 5px 0; /* Yukarı ve aşağı boşlukları ayarlar */
+            padding: 5px; /* Sol ve sağ boşlukları ayarlar */
+        }
+        
+        .navbar button {
+            color:fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #28a745;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .navbar button:hover {
+            background-color: #0056b3;
+        }
+
+
+        .panel-container {
+            background: rgba(255, 255, 255, 0.5);
+            padding: 10px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            height: 50%;
+            width: 50%;
+            position: absolute;
+            top: 50%;
+            left: 55%;
+            transform: translate(-50%, -50%);
+        }
+
+        .panel-container h2 {
+            color: #333;
+            margin: 20px 0;
+        }
+
+        .upload-container {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+           
+        }
+
+        #file-input {
+            display: none;
+        }
+       
+
+        #file-label {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #file-label:hover {
+            background-color: #0056b3;
+        }
+
+        #file-selected {
+            margin-top: 10px;
+        }
+
+        .file-list {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        .file-list li {
+            margin-bottom: 10px;
+        }
+
+        #upload-form button[type="submit"] {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #28a745;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #upload-form button[type="submit"]:hover {
+            background-color: #218838;
+        }
+
+        /* Animasyon */
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #ddd;
+            border-radius: 10px;
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-done {
+            width: 0%;
+            height: 100%;
+            background-color: #007BFF;
+            border-radius: 10px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: width 0.3s ease-in-out;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .progress-done.done {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navbar">
+       <a href="/panel.html">
+            <img src="logo.png" width="50px" >
+       </a>
+       <div>
+            <span>Welcome <span id="username"></span>!</span>
+        </div>
+        <div>
+            <a href="#">My Uploads</a>
+            <br> 
+            <a href="#">About Us</a>
+            <br>
+            <a href="#">Terms Of Services</a>
+            <br>
+
+            <button id="logout-btn">Logout</button>
+        </div>
+    </div>
+
+    <div class="panel-container">
+        <h2>Upload Panel</h2>
+        <div class="upload-container">
+            <h3>Upload a File</h3>
+            <form id="upload-form" enctype="multipart/form-data"  action="javascript:uploadFile()">
+                <input type="file" id="file-input" name="file">
+                <label for="file-input" id="file-label">Select File</label>
+                <div id="file-selected">No File Selected</div>
+                <br><br><br>
+                <button type="submit">Upload</button>
+                <br>
+            </form>
+            <div>
+                <a id="clickable-direct-link" href="">
+                    <span id="direct-link"></span>
+                </a>
+            </div>
+            <!-- Animasyon -->
+            <div class="progress-bar">
+                <div class="progress-done">Done</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('file-input');
+            const fileSelected = document.getElementById('file-selected');
+            fileInput.addEventListener('change', () => {
+                const file = fileInput.files[0];
+                const fileSelectedText = file ? `Selected File: ${file.name}` : 'No file selected';
+                fileSelected.innerText = fileSelectedText;
+            });
+
+
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            const response = await fetch('/logout', {
+                method: 'POST',
+            });
+
+            if (response.ok) {
+                localStorage.removeItem('token');
+                window.location.href = '/index.html';
+            } else {
+                // Hata durumunda burada işlem yapılabilir
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/index.html';
+            } else {
+                const username = localStorage.getItem('username');
+                document.getElementById('username').innerText = username;
+            }
+ 
+        });
+
+        function uploadFile() {
+            const formData = new FormData(document.getElementById('upload-form'));
+            const progressBar = document.querySelector('.progress-bar');
+            const progressDone = document.querySelector('.progress-done');
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData,
+                onProgress: (event) => {
+                    if (event.lengthComputable) {
+                        const percentage = (event.loaded / event.total) * 100;
+                        progressDone.style.width = percentage + '%';
+                    }
+                }
+            })
+                .then(response => {
+                    if (response.ok) {
+                        progressDone.classList.add('done'); // Animasyonu tamamlayın
+                        return response.text(); 
+                    } else {
+                        throw new Error('Network response was not ok');
+                    }
+                })
+                .then(data => {
+                    document.getElementById('direct-link').textContent = data;
+                    const directLinkSpan = document.getElementById('direct-link');
+                    const anchorTag = document.getElementById('clickable-direct-link');
+                    const directLink = directLinkSpan.textContent;
+                    anchorTag.setAttribute('href', directLink);
+                    
+                })
+                .catch(error => {
+                    // Hata durumunda burada işlem yapılabilir
+                });
+        }
+    </script>
+
+</body>
+
+</html>

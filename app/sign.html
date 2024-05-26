@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up Page</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(to bottom, rgba(0, 0, 50, 0.8), rgba(0, 0, 150, 0.8)), url('bg.jpeg') no-repeat center center fixed;
+            background-size: cover;
+        }
+        .login-container {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            box-sizing: border-box;
+        }
+        .login-container img {
+            width: 80px;
+            border-radius: 50%;
+        }
+        .login-container h2 {
+            color: #fff;
+            margin: 20px 0;
+        }
+        .login-container h3 {
+            color: #fff;
+            margin: 20px 0;
+        }
+        .login-container a {
+            color: #fff;
+            text-decoration: none;
+        }
+        .login-container a:hover {
+            color: #007BFF;
+            text-decoration: underline;
+        }
+        .login-container input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.8);
+            box-sizing: border-box;
+        }
+        .login-container button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 25px;
+            background: #007BFF;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+            box-sizing: border-box;
+        }
+        .login-container button:hover {
+            background: #0056b3;
+        }
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 300px;
+            text-align: center;
+            border-radius: 10px;
+        }
+        .modal-content h4 {
+            margin: 0 0 10px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <img src="logo.png" alt="logo">
+        <h2>Entropy File Server</h2>
+        <form id="signup-form">
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Sign Up</button>
+        </form>
+        <h3>Already have an account? <a href="/">Login</a></h3>
+    </div>
+
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h4>User Registered Successfully</h4>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('signup-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = e.target.username.value;
+            const password = e.target.password.value;
+
+            const response = await fetch('/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+
+            const result = await response.text();
+            if (response.status === 201) {
+                showModal();
+            } else {
+                alert(result);
+            }
+        });
+
+        function showModal() {
+            const modal = document.getElementById("myModal");
+            const span = document.getElementsByClassName("close")[0];
+
+            modal.style.display = "block";
+
+            span.onclick = function() {
+                modal.style.display = "none";
+            }
+
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
+        }
+    </script>
+</body>
+</html>
