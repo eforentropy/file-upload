@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Panel</title>
+
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom, rgba(0, 0, 50, 0.8), rgba(0, 0, 150, 0.8));
+            overflow: hidden;
+        }
+
+        #video-background {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -1000;
+            background: url('media/encode.mp4') no-repeat;
+            background-size: cover;
+        }
+
+        .navbar {
+            background: rgba(0, 86, 179, 0.3);
+            color: #fff;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 200px; 
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .navbar div {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-top: 20px;
+        }
+
+        .navbar a {
+            color: #fff;
+            font-size: 20px;
+            text-decoration: none;
+            margin: 5px 0; 
+            padding: 5px; 
+            display:block;
+        }
+        .navbar h3 {
+            color: #fff;
+            font-size: 20px;
+            text-decoration: none;
+            margin: 5px 0; 
+            padding: 5px; 
+        }
+        .navbar span{
+            color: #fff;
+            font-size: 20px;
+            text-decoration: none;
+            margin: 5px 0; 
+            padding: 5px; 
+        }
+        
+        .navbar button {
+            color:fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #28a745;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .navbar button:hover {
+            background-color: #0056b3;
+        }
+        .navbar .nav-element:hover{
+            background-color: red;
+        }
+
+        .panel-container {
+            background: rgba(255, 255, 255, 0.7);
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            height: 80%;
+            width: 80%;
+            position: absolute;
+            top: 50%;
+            left: 55%;
+            transform: translate(-50%, -50%);
+            overflow-y: auto; /* Panel container'ın aşırı genişlediğinde kaydırma çubuğu göster */
+        }
+
+        .panel-container h2 {
+            color: #000000;
+            margin: 20px 0;
+        }
+        .panel-container table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .panel-container th, .panel-container td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .panel-container th {
+            background-color: #f2f2f2;
+        }
+
+    </style>
+</head>
+
+<body>
+    <video id="video-background" autoplay loop muted>
+        <source src="media/encode.mp4" type="video/mp4">
+    </video>
+    <div class="navbar">
+        <a href="/upload.html" id="logo">
+            <img src="media/logo.png" width="50px">
+        </a>
+        <div>
+            <span>Welcome <span id="username"></span>!</span>
+        </div>
+        <div>
+            <a href="/upload.html" class="nav-element">Upload</a>
+            <br>
+            <a href="/my-uploads.html" class="nav-element">My Uploads</a>
+            <br> 
+            <a href="/about-us.html" class="nav-element">About Us</a>
+            <br>
+            <a href="/tos.html" class="nav-element">Terms Of Services</a>
+            <br>
+            <button id="logout-btn">Logout</button>
+        </div>
+    </div>
+    <div class="panel-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>URL</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody id="file-list">
+                
+            </tbody>
+        </table>
+    </div>
+    <script>
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            const response = await fetch('/logout', {
+                method: 'POST',
+            });
+
+            if (response.ok) {
+                localStorage.removeItem('token');
+                window.location.href = '/login.html';
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', async function () {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        window.location.href = '/login.html';
+    } else {
+        const username = localStorage.getItem('username');
+        document.getElementById('username').innerText = username;
+
+        const response = await fetch('/user/uploads', {
+            method: 'GET',
+            headers: {
+                'Authorization': `${token}`
+            }
+        });
+
+        if (response.ok) {
+            const files = await response.json();
+            const fileList = document.getElementById('file-list');
+
+            // Dosyaları panel container içine tablo olarak ekle
+            files.forEach((file, index) => {
+                const uploadDate = new Date(file.uploadDate);
+                const uploadDateString = uploadDate.toLocaleString();
+
+                // Dosya adını regex ile al
+                const fileName = file.url.match(/uploads\/\d+-(.*)$/)[1];
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td><a href="${file.url}" target="_blank">${fileName}</a></td>
+                    <td>${uploadDateString}</td>
+                `;
+                fileList.appendChild(row);
+            });
+        } else {
+            console.error('Failed to fetch user uploads');
+        }
+    }
+});
+
+    </script>
+</body>
+
+</html>
