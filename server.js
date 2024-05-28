@@ -96,13 +96,16 @@ app.post('/upload', authenticateJWT, upload.single('file'), async (req, res) => 
 
 app.post('/signup', async (req, res) => {
     const { username, password } = req.body;
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+        return res.status(400).send('Username already exist');
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
-
     const newUser = new User({ username, password: hashedPassword });
     await newUser.save();
-
-    res.status(201).send('User registered successfully');
+    res.status(201).send('User successfully registered');
 });
+
 
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
