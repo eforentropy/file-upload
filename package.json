@@ -22,5 +22,6 @@
     "particlesjs": "^2.2.3",
     "uuid": "^9.0.1"
   },
+  "devDependencies": {},
   "description": ""
 }

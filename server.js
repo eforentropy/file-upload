@@ -35,7 +35,7 @@ değişkeni tanımlayabilirsiniz
 
 /*
 Mongo connect localhost değerini Linux sistemlerde bazen valid olarak algılamıyor
-Sorun çıkması halinde 127.0.0.1 olarak düzelt
+Sorun çıkması halinde 127.0.0.1 olarak ayarlanabilir.
 */
 
 
