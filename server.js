@@ -84,7 +84,7 @@ app.post('/upload', authenticateJWT, upload.single('file'), async (req, res) => 
     if (req.file) {
         const fileName = req.file.filename;
         const username = req.user.username; 
-        const url = 'http://127.0.0.1:3000/uploads/' + fileName;
+        const url = process.env.PUBLIC_ADDR+'/uploads/' + fileName;
         const newLink = new Link({ username, url });
         await newLink.save();
 
