@@ -32,7 +32,15 @@ Hata alırsanız root path üzerinde .env dosyası oluşturup JWT_SECRET
 değişkeni tanımlayabilirsiniz
 */
 
-mongoose.connect('mongodb://localhost:27017/entropy', { useNewUrlParser: true, useUnifiedTopology: true })
+
+/*
+Mongo connect localhost değerini Linux sistemlerde bazen valid olarak algılamıyor
+Sorun çıkması halinde 127.0.0.1 olarak düzelt
+*/
+
+
+
+mongoose.connect('mongodb://127.0.0.1:27017/entropy', { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
         console.log('Connected to MongoDB');
     })
@@ -80,6 +88,10 @@ app.post('/logout', (req, res) => {
     res.sendStatus(200);
 });
 
+
+/*
+.env içerisinde PUBLIC_ADDR olarak verilen url public dosya sunucusu valid url si olmalıdır
+*/
 app.post('/upload', authenticateJWT, upload.single('file'), async (req, res) => {
     if (req.file) {
         const fileName = req.file.filename;
